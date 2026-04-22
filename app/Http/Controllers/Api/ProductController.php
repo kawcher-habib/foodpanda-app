@@ -10,17 +10,39 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $qury = Product::query();
+        $query = Product::query();
+
         if ($request->has('category_id')) {
-            $qury->where('category_id', $request->category_id);
+            $query->where('category_id', $request->category_id);
         }
 
-        $products = $qury->paginate(10);
+        $products = $query->paginate(10);
         //    return ProductResource::collection($products);
+
         return response()->json([
             'status' => true,
             'message' => 'Products retrieved successfully',
             'data' => $products
         ]);
+    }
+
+    public function create(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'category_id' => 'required|integer',
+            'image' => 'nullable|string',
+            'is_available' => 'boolean'
+        ]);
+
+        $product = Product::create($validated);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Product created successfully',
+            'data' => $product
+        ], 201);
     }
 }
