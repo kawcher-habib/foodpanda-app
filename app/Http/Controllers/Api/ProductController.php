@@ -45,4 +45,23 @@ class ProductController extends Controller
             'data' => $product
         ], 201);
     }
+
+
+    public function show($id)
+    {
+        $product = Product::find($id);
+
+        if (!$product) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Product not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Product retrieved successfully',
+            'data' => $product
+        ]);
+    }
 }
